@@ -1,23 +1,18 @@
 
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import Login from "./components/Login";
-import Signin from "./components/Signin";
+import Register from "./components/Register";
 import Start from "./components/Start";
 
 
 function App() {
   return (
-    <BrowserRouter className="App">
+    <BrowserRouter>
       <Switch>
-        <Route exact path="/">
-          <Start/>
-        </Route>
-        <Route exact path="/login">
-          <Login/>
-        </Route>
-        <Route exact path="./Signin">
-
-        </Route>
+        <Route path="/home"/>
+        <Route path="/login" component={Login}/>
+        <Route path="/register" component={Register}/> 
+        <Route path="/" component={Start}/>
       </Switch>
     </BrowserRouter>
   );

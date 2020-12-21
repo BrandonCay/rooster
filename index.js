@@ -4,6 +4,8 @@ const cors=require("cors");
 const dotenv=require("dotenv");
 const mongoose=require("mongoose");
 const authRouter=require("./routes/authentication")
+const tok=require("./routes/verifyTokens");
+const bodyParser = require('body-parser');
 
 dotenv.config();
 
@@ -12,9 +14,11 @@ mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser:true, useUnifiedTopolo
 
 
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.urlencoded({extended:false}))
+app.use(bodyParser.json())
+//app.use(express.json());
 app.use('/api/auth',authRouter);
-app.use('/api/user',) //get and post requests by users
+//app.use('/api/user',) //get and post requests by users
 
 
 const PORT=process.env.PORT || 5000;

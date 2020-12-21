@@ -1,25 +1,25 @@
-const Joi = require('@hapi/joi');
-
-
+const JoiOriginal= require('@hapi/joi');
+const Joi = JoiOriginal.extend(require('joi-phone-number'));
+ 
 
 function registerValidate (data){
-    const schema={
-        userName: Joi.string().required(),
-        name:Joi.string().required(),
-        email:Joi.string().email().required(),
+    const schema= Joi.object({
+        username: Joi.string().min(4).max(15),
+        name:Joi.string(),
+        email:Joi.string().email(),
         password:Joi.string().min(6).required(),
-        phoneNumber:Joi.string().phoneNumber(),
-        DoB:Joi.string().date() //date range will be determined 
-    }
-    return Joi.validate(data, schema);
+        phoneNumber:Joi.string(),
+        DoB:Joi.date() //date range will be determined 
+    })
+    return schema.validate(data);
 }
 
 function loginValidate(date){
- const schema={
-     userName:Joi.string().required(),
+ const schema= Joi.object({ 
+     username:Joi.string().required(),
      password:Joi.string().min(6).required()
- }
- return Joi.validate(data,schema);
+ })
+ return schema.validate(data);
 }
 
 module.exports.registerValidate = registerValidate;
