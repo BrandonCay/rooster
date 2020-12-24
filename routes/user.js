@@ -1,8 +1,11 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const userModel = require('../models/userModel');
+const verifyTok=require("./verifyTokens");
 
-router.get('/home', async(req,res)=>{ 
+router.get('/home', verifyTok, async(req,res)=>{ 
+    res.send(req.userId);
+    /*
     try{
         let following = await userModel.findOne({_id:req.userId});
         following = following.following;
@@ -11,7 +14,7 @@ router.get('/home', async(req,res)=>{
         const todayDate=new Date().getDate(); //todays date in days
         for(let i=0; i<sz;++i){
             let fClucks=following[i].clucks;
-            for(let j=fClucks.length-1; j>=0 && fClucks[j].date.getDate()===todayDate; --j){//push all clucks from today. NOTE: twitter  
+            for(let j=fClucks.length-1; j>=0 && fClucks[j].date.getDate()===todayDate; --j){//push all clucks from today.  
                 clucks.push(fClucks[j]);
             }
         }  
@@ -20,7 +23,7 @@ router.get('/home', async(req,res)=>{
         console.log(e);
     }
     //use date as primary sort and popular as secondary
-    res.json({list:clucks});
+    res.json({list:clucks});*/
 })
 
 

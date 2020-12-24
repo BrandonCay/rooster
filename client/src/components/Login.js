@@ -10,17 +10,43 @@ class Login extends React.Component{
         }
     }
 
+    async handleSubmit(e){
+        e.preventDefault();
+        const data={
+            username:e.target.elements[0].value,
+            password:e.target.elements[1].value
+        }
+        console.log("Hello",data);
+        let result= await fetch('/api/auth/login', 
+        {method:'POST', 
+        headers:{'Content-Type':'application/json'}, 
+        body:JSON.stringify(data)
+        })
+        result=await result.json();
+        if(result.success){
+            this.props.history.push("/home");
+            return;
+        }else if(result.success===false){
+            this.props.history.push("/error");
+
+        }else{
+            console.log(await result.text());
+            this.props.history.push("/error");
+
+        }
+    }
+
     render(){
         return(
             <div>
-                <Form method="POST" action="/api/auth/login">
+                <Form onSubmit={this.handleSubmit.bind(this)}>
                     <Form.Group>
                         <Form.Label> Username, e-mail, or phone number </Form.Label>
-                        <Form.Control type="text" placeholder="Enter one of the above here" required/>
+                        <Form.Control type="text" placeholder="Enter one of the above here" required name="username"/>
                     </Form.Group>
                     <Form.Group>
                         <Form.Label> Password</Form.Label>
-                        <Form.Control type="password" placeholder="Enter Password Here" required/>
+                        <Form.Control type="password" placeholder="Enter Password Here" required name="password"/>
                     </Form.Group>
                     <Button type="submit">
                         Submit
