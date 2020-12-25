@@ -9,10 +9,33 @@ class Register extends React.Component{
             
         }
     }
+    async handleOnSubmit(e){
+        e.preventDefault();
+
+        const data={
+            username: e.target.elements[0].value,
+            email:e.target.elements[1].value,
+            phoneNumber: e.target.elements[2].value,
+            password:e.target.elements[3].value
+        }
+        let result=await fetch('/api/auth/register',{
+            method:"POST",
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(data)
+        })
+        result=await result.json();
+        if(result.success){
+            window.open('/home','_blank','noopener,noreferrer');
+        }else{
+            window.open('/error','_blank','noopener,noreferrer');
+        }
+    }
     render(){
         return(
             <div>
-                <Form encType="application/x-www-form-urlencoded" action="/api/auth/register" method="POST"> 
+                <Form onSubmit={this.handleOnSubmit.bind(this)}> 
                     <Form.Group>
                         <Form.Text>You must enter at least one of the following: e-mail, phone number </Form.Text>
                     </Form.Group>

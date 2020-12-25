@@ -24,15 +24,10 @@ class Login extends React.Component{
         })
         result=await result.json();
         if(result.success){
-            this.props.history.push("/home");
-            return;
-        }else if(result.success===false){
-            this.props.history.push("/error");
 
+           window.open("/home", "_blank","noopener,noreferrer");
         }else{
-            console.log(await result.text());
-            this.props.history.push("/error");
-
+           window.open("/error", "_blank","noopener,noreferrer")
         }
     }
 
