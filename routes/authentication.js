@@ -3,8 +3,10 @@ const Joi =require('@hapi/joi');
 const bcrypt=require('bcryptjs');
 const {registerValidate, loginValidate} = require('../validation');
 const User = require("../models/userModel");
+const aCodes=require("../models/activationCodes");
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
+const { url } = require("inspector");
 dotenv.config();
 
 async function dataExists(data){
@@ -97,5 +99,16 @@ router.post('/login', async (req,res) => {
 });    
 
 
+router.get("/:verifyCode", async (req,res)=>{
+   const fnd=await aCodes.findOne({code:req.params.verifyCode})
+   if(fnd){
+      let userDoc=await User.findByIdAndUpdate(fnd.userId, {active:true});
+      aCodes.deleteOne(fnd); //use object as filter
+      res.status(200).json({fnd:true});
+      
+   }else{
+       res.status(404).json({fnd:false});
+   }
+});
 
  module.exports = router;

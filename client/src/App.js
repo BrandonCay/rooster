@@ -3,7 +3,7 @@ import {BrowserRouter, Route, Switch} from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Start from "./components/Start";
-import Error from "./components/Error";
+import Status from "./components/Status";
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
         <Route path="/register" component={Register}/> 
         <Route path="/home"/>
         <Route path="/error" component={Error}/>
+        <Route path="/:verifyCode" component={Status} />
         <Route path="/" component={Start}/>
       </Switch>
     </BrowserRouter>

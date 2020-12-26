@@ -7,7 +7,6 @@ const authRouter=require("./routes/authentication")
 const tok=require("./routes/verifyTokens");
 const bodyParser = require('body-parser');
 const path = require("path");
-
 dotenv.config();
 
 mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser:true, useUnifiedTopology:true});
@@ -17,18 +16,11 @@ mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser:true, useUnifiedTopolo
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
+mongoose.set("useCreateIndex", true);
+//mongoose.set("createIndexes",true);
 //app.use(express.json());
 app.use('/api/auth',authRouter);
 //app.use('/api/user',) //get and post requests by users
-app.get("/api/auth/:verifyCode",(req,res)=>{ //allows redirect url to exclude api/auth
-    if(process.env.NODE_ENV === "production"){
-       res.redirect(`/${req.params.verifyCode}`)
-    }
-    else{
-       //check database for verified code
-       res.send("")
-    }
-});
        
 
 if(process.env.NODE_ENV==="production"){

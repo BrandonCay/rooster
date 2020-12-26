@@ -24,7 +24,6 @@ class Login extends React.Component{
         })
         result=await result.json();
         if(result.success){
-
            window.open("/home", "_blank","noopener,noreferrer");
         }else{
            window.open("/error", "_blank","noopener,noreferrer")
