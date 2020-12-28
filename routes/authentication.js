@@ -6,7 +6,7 @@ const User = require("../models/userModel");
 const aCodes=require("../models/activationCodes");
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const { url } = require("inspector");
+const nodemailer = require("nodemailer");
 dotenv.config();
 
 async function dataExists(data){
@@ -16,6 +16,15 @@ async function dataExists(data){
       return true;
    return false;
 }
+const transporter=nodemailer.createTransport({
+   service:"Gmail",
+   auth:{
+      user:process.env.USER,
+      pass:process.env.EMAIL_PASS
+   }
+})
+
+
 
 router.post('/register', async (req,res)=>{
    let registerInfo = req.body;
@@ -50,7 +59,15 @@ router.post('/register', async (req,res)=>{
       registerInfo.dateCreated=new Date();
       const newUser = new User(registerInfo);
       //check if e-mail exists or user existss
-      await newUser.save();
+      newUser.save();
+      const token=jwt.sign({_id:registerInfo._id},EMAIL_TOKEN);
+      transporter.sendMail({
+         from: '"Fred Foo 👻" <foo@example.com>', // sender address
+          to: "bar@example.com, baz@example.com", // list of receivers
+          subject: "Hello ✔", // Subject line
+          text: "Hello world?", // plain text body
+          html: `<b>Hello world?</b><a href=http://localhost:3000/${token}>http://localhost:3000/${token}</a>`, // html body
+        });
       console.log('registered', registerInfo);
       res.send("Success"); //send login page for redirection 
    }
@@ -100,14 +117,14 @@ router.post('/login', async (req,res) => {
 
 
 router.get("/:verifyCode", async (req,res)=>{
-   const fnd=await aCodes.findOne({code:req.params.verifyCode})
-   if(fnd){
-      let userDoc=await User.findByIdAndUpdate(fnd.userId, {active:true});
-      aCodes.deleteOne(fnd); //use object as filter
-      res.status(200).json({fnd:true});
+   const payload=jwt.verify(req.params.verifyCode, process.env.EMAIL_TOKEN)
+   console.log(payload);
+   if(payload){
+      User.findByIdAndUpdate(paylod.userId, {active:true}); 
+      res.status(200).json({success:true, msg:"Verfication succeeded. Your account has been activated. You may login"});
       
    }else{
-       res.status(404).json({fnd:false});
+       res.status(404).json({success:false, msg:"Verification failed. The code entered may not exist or may have expired"});
    }
 });
 

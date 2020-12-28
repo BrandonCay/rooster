@@ -13,7 +13,7 @@ function App() {
         <Route path="/register" component={Register}/> 
         <Route path="/home"/>
         <Route path="/error" component={Error}/>
-        <Route path="/:verifyCode" component={Status} />
+        <Route path="/:verificationCode" component={Status} />
         <Route path="/" component={Start}/>
       </Switch>
     </BrowserRouter>
