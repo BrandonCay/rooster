@@ -1,4 +1,4 @@
-const jsw = require('jsonwebtoken');
+const jsw = require('jsonwebtoken'); //jsw not jwt
 const dotenv = require('dotenv')
 
 dotenv.config();

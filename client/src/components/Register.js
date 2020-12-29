@@ -1,12 +1,12 @@
 import React from "react";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-
+import Container from 'react-bootstrap/Container';
 class Register extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            
+            msg:"After registering, a verification code will be sent to your e-mail or phone number depending which you enter (e-mail if you choose both) "
         }
     }
     async handleOnSubmit(e){
@@ -27,14 +27,14 @@ class Register extends React.Component{
         })
         result=await result.json();
         if(result.success){
-            window.open('/home','_blank','noopener,noreferrer');
+            window.open('/login','_blank','noopener,noreferrer');
         }else{
-            window.open('/error','_blank','noopener,noreferrer');
+            this.setState({msg:result.msg})
         }
     }
     render(){
         return(
-            <div>
+            <Container fluid>
                 <Form onSubmit={this.handleOnSubmit.bind(this)}> 
                     <Form.Group>
                         <Form.Text>You must enter at least one of the following: e-mail, phone number </Form.Text>
@@ -61,7 +61,8 @@ class Register extends React.Component{
                         Submit
                     </Button>
                 </Form>
-            </div>
+                <Form.Text>{this.state.msg}</Form.Text>
+            </Container>
         )
     }
 }

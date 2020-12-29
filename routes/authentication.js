@@ -19,10 +19,27 @@ async function dataExists(data){
 const transporter=nodemailer.createTransport({
    service:"Gmail",
    auth:{
-      user:process.env.USER,
+      user:process.env.EMAIL_USER,
       pass:process.env.EMAIL_PASS
    }
 })
+
+function catchResponse(e,res){
+   if('msg' in e)
+   res.status(e.status).json(e);
+   else{
+   res.status(400).json(new StatusObj(false,400,e));      
+//return res.status(400).send('Invalid In
+   }
+}
+
+function StatusObj(success,status, msg){
+   this.success=success;
+   this.status=status;
+   this.msg=msg;
+}
+
+
 
 
 
@@ -32,11 +49,13 @@ router.post('/register', async (req,res)=>{
       const {error} = registerValidate(registerInfo);
       if(error){
          console.log(error);
-         return res.status(400).send('Invalid Entry');
+         throw new StatusObj(false, 400, 'Invalid Entry');
+         // return res.status(400).send('Invalid Entry');
       }
       const {username, email, phoneNumber} = registerInfo;
       if(!username || (!email && !phoneNumber)){
-        return res.status(400).send('Please enter a username then enter either an email or phone number or both');
+         throw new StatusObj(false, 400,'Please enter a username then enter either an email or phone number or both');
+        //return res.status(400).send('Please enter a username then enter either an email or phone number or both');
       }
       let fnd=false;
       fnd=await dataExists({username:username });
@@ -51,29 +70,44 @@ router.post('/register', async (req,res)=>{
          console.log(fnd);
 
       if(fnd){
-         return res.status(400).send("Some of the provided info is already in use. Cannot make another account");
+         throw new StatusObj(false,400,"Some of the provided info is already in use. Cannot make another account" )
+        // return res.status(400).send("Some of the provided info is already in use. Cannot make another account");
       }
 
       const hashPassword = await bcrypt.hash(req.body.password, 10);
       registerInfo.password=hashPassword;
       registerInfo.dateCreated=new Date();
-      const newUser = new User(registerInfo);
+      let newUser = new User(registerInfo);
+      newUser=await newUser.save();
       //check if e-mail exists or user existss
-      newUser.save();
-      const token=jwt.sign({_id:registerInfo._id},EMAIL_TOKEN);
-      transporter.sendMail({
-         from: '"Fred Foo 👻" <foo@example.com>', // sender address
-          to: "bar@example.com, baz@example.com", // list of receivers
-          subject: "Hello ✔", // Subject line
-          text: "Hello world?", // plain text body
-          html: `<b>Hello world?</b><a href=http://localhost:3000/${token}>http://localhost:3000/${token}</a>`, // html body
-        });
+      let confirmationMsg;
+      if(registerInfo.email){
+         
+         const token=jwt.sign({_id:newUser._id},process.env.EMAIL_SECRET,{expiresIn:'1d'});
+         transporter.sendMail({
+            from: "No Reply", // sender address
+            to: `${registerInfo.email}`, // list of receivers
+            subject: "Hello ✔", // Subject line
+            text: "Hello world?", // plain text body
+            html: `<b>Click Link</b><a href=http://localhost:3000/${token}>http://localhost:3000/${token}</a>`, // html body
+         });
+         confirmationMsg="A confirmation link was to your e-mail. Click on the link to activate your account";
+      }else{
+         confirmationMsg="A confirmaiton code was sent to your phone. Enter it at the link provided to activate your account";
+         //phoneNumber verification
+      }
       console.log('registered', registerInfo);
-      res.send("Success"); //send login page for redirection 
+      res.send(new StatusObj(true, 200, `Account Successfully Registered. ${confimationMsg}`)); //send login page for redirection 
    }
    catch(e){
-      console.log('error:', e);
-      res.status(400).json({error:e});
+      console.log(e);
+      if('msg' in e)
+      res.status(e.status).json(e);
+      else{
+      res.status(400).json(new StatusObj(false,400,e));      
+   //return res.status(400).send('Invalid In
+      }
+      //catchResponse(e,res);
    }
 });
 
@@ -84,7 +118,8 @@ router.post('/login', async (req,res) => {
       const {error} = loginValidate(req.body);
       console.log(error);
       if(error){
-         return res.status(400).send(`Invalid entry:${error}`);
+         throw new StatusObj(false, 400,`Invalid entry: ${error}`)
+         //return res.status(400).send(`Invalid entry:${error}`);
       }
       const {username} =req.body;//username is login identification chose (username, phonenumber or e-mail)
       const isEmailRe=/.*@.*/;
@@ -97,34 +132,38 @@ router.post('/login', async (req,res) => {
             user = await User.findOne({phoneNumber:username})
       }
       if(!user){ 
-         return res.status(404).send("ID not found"); 
+         throw new StatusObj(false, 404, "ID not found");
+         //return res.status(404).send("ID not found"); 
       }
-      console.log('compare')//
       const validPass = await bcrypt.compare(req.body.password, user.password);
-      console.log('compare done', validPass)//
       if(!validPass) {
-         return res.status(400).send('Invalid password'); 
+         throw new StatusObj(false, 400, 'Invalid password');
+         //return res.status(400).send('Invalid password'); 
       }
       const token = jwt.sign({_id:user._id},process.env.TOKEN_SECRET) //creates token using the secret and appends id as payload
-      res.set('auth-token', token).json({success:true,message:''});
+      res.set('auth-token', token).json(new StatusObj(true, 200, "Login Successful"));
    }
    catch(e){
-      console.log(e);
-      return res.status(400).send('Invalid Input');
-   }
+      if('msg' in e)
+         res.status(e.status).json(e);
+      else{
+         res.status(400).json(new StatusObj(false,400,e));      
+      //return res.status(400).send('Invalid In
+      }
+}
    console.log('loging done');
+
 });    
 
 
 router.get("/:verifyCode", async (req,res)=>{
-   const payload=jwt.verify(req.params.verifyCode, process.env.EMAIL_TOKEN)
-   console.log(payload);
-   if(payload){
-      User.findByIdAndUpdate(paylod.userId, {active:true}); 
-      res.status(200).json({success:true, msg:"Verfication succeeded. Your account has been activated. You may login"});
-      
-   }else{
-       res.status(404).json({success:false, msg:"Verification failed. The code entered may not exist or may have expired"});
+   try{
+      const payload=jwt.verify(req.params.verifyCode, process.env.EMAIL_SECRET)
+      console.log("payload: ", payload);
+      await User.findByIdAndUpdate(payload._id, {active:true}); //await necessary to work
+      res.status(200).json({success:true, msg:"Verfication succeeded. Your account has been activated. You may login"});   
+   }catch(e){
+      res.status(404).json({success:false, msg:"Verification failed. The code entered may not exist or may have expired"});
    }
 });
 

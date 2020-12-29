@@ -12,7 +12,7 @@ function App() {
         <Route path="/login" component={Login}/>
         <Route path="/register" component={Register}/> 
         <Route path="/home"/>
-        <Route path="/error" component={Error}/>
+        <Route path="/error" component={()=><div>dizzy</div>}/>
         <Route path="/:verificationCode" component={Status} />
         <Route path="/" component={Start}/>
       </Switch>

@@ -19,7 +19,8 @@ const userSchema=new Schema(
         likes: Array,
         verified:Boolean,
         clucksAndReplies: Array,
-        dateCreated: Date
+        dateCreated: Date,
+        active:{type:Boolean, default:false}
     }
 )
 const Model=mongoose.model;
