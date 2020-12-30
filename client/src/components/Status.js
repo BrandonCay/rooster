@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 import checkImg from '../images/checkmark.png';
 import crossImg from '../images/768px-Red_X.svg.png';
 
@@ -25,7 +26,7 @@ import crossImg from '../images/768px-Red_X.svg.png';
     }
     render(){
         return(
-                <div>
+                <Container fluid>
                     {this.state.fReq.success ? 
                     <div>
                         <img src={checkImg} alt="nothing"/>
@@ -40,7 +41,7 @@ import crossImg from '../images/768px-Red_X.svg.png';
 
                     </div>
                     }
-                </div>
+                </Container>
         )
     }
 }

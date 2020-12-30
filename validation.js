@@ -6,7 +6,7 @@ function registerValidate (data){
     const schema= Joi.object({
         username: Joi.string().min(4).max(15).allow(''),
         name:Joi.string(),
-        email:Joi.string().email(),
+        email:Joi.string().email().allow(''),
         password:Joi.string().min(6).required(),
         phoneNumber:Joi.string().allow(''),
         DoB:Joi.date() //date range will be determined 

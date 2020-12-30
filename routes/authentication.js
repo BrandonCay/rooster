@@ -3,12 +3,12 @@ const Joi =require('@hapi/joi');
 const bcrypt=require('bcryptjs');
 const {registerValidate, loginValidate} = require('../validation');
 const User = require("../models/userModel");
-const aCodes=require("../models/activationCodes");
-const dotenv = require('dotenv');
+const dotenv = require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
-dotenv.config();
+const client=require("twilio")(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
+const phoneOn=false;
 async function dataExists(data){
    const fnd = await User.findOne(data);
    console.log(fnd);
@@ -93,11 +93,23 @@ router.post('/register', async (req,res)=>{
          });
          confirmationMsg="A confirmation link was to your e-mail. Click on the link to activate your account";
       }else{
+         if(phoneOn){
+            //code works but limited attempts
+            const token=jwt
+            client.messages.create(
+               {
+                  body:"code here",
+                  from:`${process.env.TWILIO_PHONE}`,
+                  to:'19734324252'
+               }
+            )
+         }else{
+         
+         }
          confirmationMsg="A confirmaiton code was sent to your phone. Enter it at the link provided to activate your account";
-         //phoneNumber verification
       }
       console.log('registered', registerInfo);
-      res.send(new StatusObj(true, 200, `Account Successfully Registered. ${confimationMsg}`)); //send login page for redirection 
+      res.json(new StatusObj(true, 200, `Account Successfully Registered. ${confirmationMsg}`)); //send login page for redirection 
    }
    catch(e){
       console.log(e);
@@ -105,7 +117,6 @@ router.post('/register', async (req,res)=>{
       res.status(e.status).json(e);
       else{
       res.status(400).json(new StatusObj(false,400,e));      
-   //return res.status(400).send('Invalid In
       }
       //catchResponse(e,res);
    }
@@ -119,7 +130,6 @@ router.post('/login', async (req,res) => {
       console.log(error);
       if(error){
          throw new StatusObj(false, 400,`Invalid entry: ${error}`)
-         //return res.status(400).send(`Invalid entry:${error}`);
       }
       const {username} =req.body;//username is login identification chose (username, phonenumber or e-mail)
       const isEmailRe=/.*@.*/;
@@ -133,12 +143,10 @@ router.post('/login', async (req,res) => {
       }
       if(!user){ 
          throw new StatusObj(false, 404, "ID not found");
-         //return res.status(404).send("ID not found"); 
       }
       const validPass = await bcrypt.compare(req.body.password, user.password);
       if(!validPass) {
          throw new StatusObj(false, 400, 'Invalid password');
-         //return res.status(400).send('Invalid password'); 
       }
       const token = jwt.sign({_id:user._id},process.env.TOKEN_SECRET) //creates token using the secret and appends id as payload
       res.set('auth-token', token).json(new StatusObj(true, 200, "Login Successful"));
@@ -148,8 +156,7 @@ router.post('/login', async (req,res) => {
          res.status(e.status).json(e);
       else{
          res.status(400).json(new StatusObj(false,400,e));      
-      //return res.status(400).send('Invalid In
-      }
+   }
 }
    console.log('loging done');
 
