@@ -6,7 +6,7 @@ class Login extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            hello:"hello"
+            msg:""
         }
     }
 
@@ -16,7 +16,6 @@ class Login extends React.Component{
             username:e.target.elements[0].value,
             password:e.target.elements[1].value
         }
-        console.log("Hello",data);
         let result= await fetch('/api/auth/login', 
         {method:'POST', 
         headers:{'Content-Type':'application/json'}, 
@@ -26,7 +25,15 @@ class Login extends React.Component{
         if(result.success){
            window.open("/home", "_blank","noopener,noreferrer");
         }else{
-           window.open("/error", "_blank","noopener,noreferrer")
+            const endChar=result.msg[-1];
+            if(endChar==="e"){
+                window.open("/verifyCode", "_blank","noopener,noreferrer") //opens tab to verify phoneCode
+            }else if(endChar==="l"){
+                window.open("/verifyLink", "_blank","noopener,noreferrer") //opens tab to verify phoneCode
+            }
+            else{
+                window.open("/Status", "_blank","noopener,noreferrer") //Opens status. Should send data too
+            }
         }
     }
 
@@ -46,6 +53,7 @@ class Login extends React.Component{
                         Submit
                     </Button>
                 </Form>
+                <Form.Text>{this.state.msg}</Form.Text>
             </div>
         )
     }
