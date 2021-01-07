@@ -7,6 +7,8 @@ const authRouter=require("./routes/authentication")
 const tok=require("./routes/verifyTokens");
 const bodyParser = require('body-parser');
 const path = require("path");
+const Api = require("twilio/lib/rest/Api");
+const User =require("./models/userModel");
 dotenv.config();
 
 mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser:true, useUnifiedTopology:true});
@@ -17,9 +19,14 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
 mongoose.set("useCreateIndex", true);
+//mongoose.set("useFinAndModify",false);
 //mongoose.set("createIndexes",true);
 //app.use(express.json());
 app.use('/api/auth',authRouter);
+app.get('/api/userexists/:_id',(req,res)=>{
+    const result=User.findOne({_id:req.params._id})? true:false;
+    res.json({exists:result});
+})
 //app.use('/api/user',) //get and post requests by users
        
 

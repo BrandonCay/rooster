@@ -28,12 +28,12 @@ async function dataExists(data){
    return false;
 }
 
-async function sendCode(){   // code updates untested but disabled because limited attempts
-   let hashedCode = makeHash();
-   while(!(await aCodes.find({code:hashedCode}))){ //make sure hashedCode isn't 
-      hashedCode = makeHash();
+async function sendCode(_id){   // code updates untested but disabled because limited attempts
+   let code = makeCode();
+   while(!(await aCodes.find({code:code}))){ //make sure code doesn't exist
+      code = makeCode();
    }
-   const result = new aCodes({userId:registerInfo._id, code:hashedCode.toString()});
+   const result = new aCodes({userId:_id, code:code.toString()});
    result.save();
    client.messages.create(
       {
@@ -43,33 +43,26 @@ async function sendCode(){   // code updates untested but disabled because limit
       }
    )
 }
-function sendMail(){
-   const token=jwt.sign({_id:newUser._id},process.env.EMAIL_SECRET,{expiresIn:'1d'});
+function sendMail(userId, email){
+   const token=jwt.sign({_id:userId},process.env.EMAIL_SECRET,{expiresIn:'1d'});
    transporter.sendMail({
       from: "No Reply", // sender address
-      to: `${registerInfo.email}`, // list of receivers
+      to: `${email}`, // list of receivers
       subject: "Hello ✔", // Subject line
       text: "Hello world?", // plain text body
       html: `<b>Click Link </b><a href=http://localhost:3000/${token}>http://localhost:3000/${token}</a>`, // html body
    });
 }
 
-function catchResponse(e,res){
-   if('msg' in e)
-   res.status(e.status).json(e);
-   else{
-   res.status(400).json(new StatusObj(false,400,e));      
-//return res.status(400).send('Invalid In
-   }
-}
 
-async function makeHash(){ //used for making hashes for phone verification codes
+
+async function makeCode(){ //used for making hashes for phone verification codes
    let result=crypto.randomInt(100000, 999999).toString();
-   result=result.toString();
-   return await bcrypt.hash(result, 10);
+   return result.toString();
+
 }
 
-function StatusObj(success,status, msg){
+function StatusObj(success=true,status=200, msg=""){
    this.success=success;
    this.status=status;
    this.msg=msg;
@@ -119,11 +112,11 @@ router.post('/register', async (req,res)=>{
       //check if e-mail exists or user existss
       let confirmationMsg;
       if(registerInfo.email){
-         sendMail();
+         sendMail(newUser._id, registerInfo.email);
          confirmationMsg="A confirmation link was to your e-mail. Click on the link to activate your account";
       }else{
          if(phoneOn){
-            sendCode();            //code works but limited attempts because of twilio account
+            sendCode(newUser._id);            //code works but limited attempts because of twilio account
             confirmationMsg=" A confirmation code was sent to your phone. Enter it at the link provided to activate your account";
          }else{
             newUser.active=true;
@@ -137,7 +130,7 @@ router.post('/register', async (req,res)=>{
    }
    catch(e){
       console.log(e);
-      if('msg' in e)
+      if(e instanceof StatusObj)
       res.status(e.status).json(e);
       else{
       res.status(400).json(new StatusObj(false,400,e));      
@@ -171,15 +164,17 @@ router.post('/login', async (req,res) => {
       if(!user.active){
          let location=""
          if(user.email){
-            sendMail();
+            sendMail(user._id, user.email);
             location="e-mail"
          }else{
             if(phoneOn){
-               sendCode(); //phoneVerification not enabled
-               location="phone";
+               sendCode(user._id); //phoneVerification not enabled
             }
+            location="phone";
          }
-         throw new StatusObj(false, 400, `Account not activated. A confirmation message was sent to your ${email}`);
+         let vStatus=new StatusObj(false, 400, `Account not activated. A confirmation message was sent to your ${location}`);
+         vStatus.payload=user._id;
+         throw vStatus;
       }
       const validPass = await bcrypt.compare(req.body.password, user.password);
       if(!validPass) {
@@ -189,10 +184,10 @@ router.post('/login', async (req,res) => {
       res.set('auth-token', token).json(new StatusObj(true, 200, "Login Successful"));
    }
    catch(e){
-      if(e instanceof 'StatusObj')
+      if(e instanceof StatusObj)
          res.status(e.status).json(e);
       else{
-         res.status(400).json(new StatusObj(false,400,e));      
+         res.status(400).json(new StatusObj(false,400,e.toString()));      
    }
 }
    console.log('logging done');
@@ -200,16 +195,17 @@ router.post('/login', async (req,res) => {
 });    
 
 
-router.post("/:verifyCode", async (req,res)=>{
+router.get("/:verifyCode", async (req,res)=>{
    try{
       const payload=jwt.verify(req.params.verifyCode, process.env.EMAIL_SECRET)
       console.log("payload: ", payload);
       if(await User.findByIdAndUpdate(payload._id, {active:true})){
+         res.status(200).json({success:true, msg:"Verfication succeeded. Your account has been activated. You may login"});
+      }else{
          throw new StatusObj(false, 404, "Verification failed. The code entered may not exist or may have expired")
       }//await necessary to work
-      res.status(200).json({success:true, msg:"Verfication succeeded. Your account has been activated. You may login"});
    }catch(e){
-      if(e instanceof 'StatusObj')
+      if(e instanceof StatusObj)
          res.status(e.status).json(e);
       else{
          res.status(400).json({success:false, msg:"An unexpected error occurred"});
@@ -219,15 +215,20 @@ router.post("/:verifyCode", async (req,res)=>{
 
 router.post('/phoneVerify', async (req,res)=>{
    try{
-      const {code, _id} = req.body //_id is past by client. Register/Login (contains _id) -> Verify Code page -> (Back end) -> phoneVerify
+      const { _id, code} = req.body //_id is past by client. Register/Login (contains _id) -> Verify Code page -> (Back end) -> phoneVerify
       let user = await aCodes.find({userId:_id});//problem:send id
-      const validCode = await bcrypt.compare(code,user.code);//could be unncessary as code confirmation is not sensitive
-      if(!validCode){
+      if(user.active){
+         res.json(new StatusObj(true,200,"Your account is already active"));
+      }
+      console.log("Code types code,user.code",typeof code, typeof user.code);
+      if(user.code === code){
+         res.json(new StatusObj(true,200,"Your account has been activated"));
+      } 
+      else{
          throw new StatusObj(false, 404, "Not a valid code");
       }
-      res.json(new StatusObj(true,200,"Your account has been activated"));
    }catch(e){
-      if(e instanceof 'StatusObj'){
+      if(e instanceof StatusObj){
          res.status(e.status).json(e);
       }else{
          res.status(400).json(new StatusObj(false, 400, "An unexpected error occurred"));

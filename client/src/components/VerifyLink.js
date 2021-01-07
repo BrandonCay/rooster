@@ -4,7 +4,6 @@ import Container from 'react-bootstrap/Container';
 import checkImg from '../images/checkmark.png';
 import crossImg from '../images/768px-Red_X.svg.png';
 
-//status=verifyLinkPage
  class VerifyLink extends React.Component{
      constructor(props){
          super();
@@ -17,11 +16,11 @@ import crossImg from '../images/768px-Red_X.svg.png';
         try{
             const {params:{verificationCode}} = this.props.match;    
             let result;
-            result=await fetch(`/api/auth/${verificationCode}`,{method:"POST"});
+            result=await fetch(`/api/auth/${verificationCode}`,{method:"GET"});
             result=await result.json();
             this.setState({fReq:result});
         }catch(e){
-            this.setState({fReq:{success:false, msg:"An error occurred"}});
+            this.setState({fReq:{success:false, msg:"An error occurred:" + e.toString()}});
         }
     }
     render(){
