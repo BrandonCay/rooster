@@ -16,6 +16,9 @@ class Login extends React.Component{
         if(passedState){
             console.log(passedState);
             this.setState({msg:passedState.msg});
+        }else if(window.msg){
+
+            this.setState({msg:window.msg});
         }
     }
 

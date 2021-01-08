@@ -29,11 +29,8 @@ async function dataExists(data){
 }
 
 async function sendCode(_id){   // code updates untested but disabled because limited attempts
-   let code = makeCode();
-   while(!(await aCodes.find({code:code}))){ //make sure code doesn't exist
-      code = makeCode();
-   }
-   const result = new aCodes({userId:_id, code:code.toString()});
+   await aCodes.findOneAndDelete({userId:_id});
+   const result = new aCodes({userId:_id, code:makeCode().toString()});
    result.save();
    client.messages.create(
       {
@@ -126,7 +123,7 @@ router.post('/register', async (req,res)=>{
          }
       }
       console.log('registered', registerInfo);
-      res.json(new StatusObj(true, 200, `Account Successfully Registered. ${confirmationMsg}`)); //send login page for redirection 
+      res.json(new StatusObj(true, 200, `Account Successfully Registered. ${confirmationMsg}`)._id=newUser._id); //send login page for redirection 
    }
    catch(e){
       console.log(e);
@@ -174,7 +171,7 @@ router.post('/login', async (req,res) => {
          }
          let vStatus=new StatusObj(false, 400, `Account not activated. A confirmation message was sent to your ${location}`);
          vStatus.payload=user._id;
-         throw vStatus;
+         throw vStatus;//verification status
       }
       const validPass = await bcrypt.compare(req.body.password, user.password);
       if(!validPass) {

@@ -18,7 +18,6 @@ class VerifyCode extends React.Component{
         if(result.exists){
             this.setState({_id:id});
         }else{
-            
             this.props.history.push("/login", {msg:"Unable to Verify Code. Login first and a code will be sent if you're not registered"});
         }
     }

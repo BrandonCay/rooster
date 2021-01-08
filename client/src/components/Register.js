@@ -27,7 +27,11 @@ class Register extends React.Component{
         })
         result=await result.json();
         if(result.success){
-            window.open('/login','_blank','noopener,noreferrer');
+            let cMsg="A verification link was sent to your email. Click it before logging in";
+            if(!data.email){
+                cMsg="A verificaion code was to your phone. Login in then enter code then submit again";
+            }
+            this.props.history.push('/login',{msg:cMsg});
         }else{
             this.setState({msg:result.msg})
         }
