@@ -5,7 +5,7 @@ import Register from "./components/Register";
 import Start from "./components/Start";
 import VerifyLink from "./components/VerifyLink";
 import VerifyCode from "./components/VerifyCode";
-import Home from "./components/Home";
+import Menu from "./components/Menu";
 
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
         <Route path="/VerifyCode/:verificationCode" component={VerifyCode}/>
         <Route path="/login" component={Login}/>
         <Route path="/register" component={Register}/> 
-        <Route path="/home" component={Home}/>
+        <Route path="/home" component={()=><Menu/>}/>
         <Route path="/:verificationCode" component={VerifyLink} />
         <Route path="/" component={Start}/>
       </Switch>
