@@ -1,17 +1,24 @@
 import React from 'react';
 
 class Home extends React.Component{
-constructor(props){
-    super();
-    this.state={
-        count=10
+    constructor(props){
+        super();
+        this.state={
+            count:10
+        }
+    }
+
+    async componentDidMount(){
+    }
+
+    render(){ //sort and display cluck. 
+        //May need to add server side sorting back up in case the client cannot perform the operation (i.e. an error or takes too long)
+        return(
+            <div>
+                {this.props.list}
+            </div>
+        );
     }
 }
-render(){ //sort and display cluck. May need to add server side sorting back up in case the client cannot perform the operation (i.e. an error or takes too long)
-    return(
-        <div>
-            {this.props.list}
-        </div>
-    );
-}
-}
+
+export default Home;
