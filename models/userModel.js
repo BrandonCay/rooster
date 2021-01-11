@@ -18,6 +18,9 @@ const userSchema=new Schema(
         media: Array,
         likes: Array,
         verified:Boolean,
+        bio:String,
+        location:String,
+        website:String,
         clucksAndReplies: Array,
         dateCreated: Date,
         active:{type:Boolean, default:false}

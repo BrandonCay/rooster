@@ -6,9 +6,17 @@ class Home extends React.Component{
         this.state={
             count:10
         }
+        this.observer;
+
+    }
+
+    handleObserver(){
+
     }
 
     async componentDidMount(){
+        this.observer=new IntersectionObserver(this.handleObserver.bind(this), {root:null, rootMargin:"0px", threshold:1.0});
+        this.observer.observer(this.loadingRef); //loadingRef is an element ex. <div ref={loadingRef => this.loadingRef=loadingRef}>
     }
 
     render(){ //sort and display cluck. 
