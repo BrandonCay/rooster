@@ -12,6 +12,7 @@ class VerifyCode extends React.Component{
         }
     }
     async componentDidMount(){
+        console.log("verifyingCode");
         let id  = this.props.match.params;
         let result = await fetch(`/api/userexists/${id}`,{method:"GET"});
         result=result.json();

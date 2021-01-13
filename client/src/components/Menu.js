@@ -1,8 +1,16 @@
 import React from 'react';
 import {Container, Col, Row} from 'react-bootstrap';
+import Home from './menuOptions/Home';
+import Profile from './menuOptions/Profile';
 
 const xs="4";
-
+const routes = {
+    home: Home,
+    profile: Profile
+}
+const rightRoutes={
+    home:<div>A</div>,
+}
 class Menu extends React.Component{
     constructor(props){
         super();
@@ -10,18 +18,36 @@ class Menu extends React.Component{
             loadState:1,
         }
         this.user=undefined;
-        this.error=undefined;
+        this.error="Error";
+        this.mid=undefined;
+        this.right=undefined;
     }
     
     async componentDidMount(){
+        console.log('Menu');
         try{
-            const token=this.props.location.state.token;
-            if(!token){
-                throw 0;
+            console.log(typeof(this.props.match.params.menuOptions),this.props.match.params.menuOptions);
+            console.log(typeof(this.props.match.params),this.props.match.params);
+
+            const path=this.props.match.params.menuOptions;
+            if(!path in routes){
+                throw "invalid path";
             }
-            const result = await fetch('/api/userdata/',{method:"GET", headers:{"auth-token":`${token}`}});
-            this.user=await result.json();
+            
+            this.mid = routes[path];
+            this.right=rightRoutes[path];
+            
+            /*
+            console.log(this.props.location);
+            if(this.props.location.state===undefined || !('token' in this.props.location.state)){//!(token necessary?)
+                throw "no token";
+            }
+            console.log('past throw');
+            const result = await fetch('/api/userdata/',{method:"GET", headers:{"auth-token":`${this.props.location.state.token}`}});
+            this.user=await result.json();*/
+            this.setState({loadState:2});
         }catch(e){
+            console.log(e);
             this.error=e;
             this.setState({loadState:0});
         }
@@ -37,11 +63,10 @@ class Menu extends React.Component{
                 </Container>
             )
         }else if(this.state.loadState=== 2){
-            const {mid, right} = this.props;
             return(
                 <Container fluid >
                     <Row xs="12">
-                        <Col xs={xs}>A</Col> <Col xs={xs}>{mid}</Col> <Col xs={xs}>{right}</Col>
+                        <Col xs={xs}>A</Col> <Col xs={xs}><this.mid/></Col> <Col xs={xs}>{this.right}</Col>
                     </Row>
                 </Container>
             )
@@ -50,6 +75,7 @@ class Menu extends React.Component{
                 <Container fluid>
                     <Row xs="12">
                         <Error error={this.error}/>
+                        Hi
                     </Row>
                 </Container> 
                 ) ;

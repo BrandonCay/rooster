@@ -47,7 +47,7 @@ function sendMail(userId, email){
       to: `${email}`, // list of receivers
       subject: "Hello ✔", // Subject line
       text: "Hello world?", // plain text body
-      html: `<b>Click Link </b><a href=http://localhost:3000/${token}>http://localhost:3000/${token}</a>`, // html body
+      html: `<b>Click Link </b><a href=http://localhost:3000/verifyLink/${token}>http://localhost:3000/${token}</a>`, // html body
    });
 }
 

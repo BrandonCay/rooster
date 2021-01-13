@@ -19,13 +19,11 @@ function App() {
     <BrowserRouter>
       <Switch>
         <Route path="/VerifyCode/:verificationCode" component={VerifyCode}/>
+        <Route path="/verifyLink/:verificationCode" component={VerifyLink} />
         <Route path="/login" component={Login}/>
         <Route path="/register" component={Register}/> 
         <Route path="/start" component={Start}/> 
-        <Route path="/" component={Menu}>
-          <Route path="/home" components={{mid:Home, left:left}}/>
-        </Route>
-        <Route path="/:verificationCode" component={VerifyLink} />
+        <Route path="/:menuOptions" component={Menu}/>
       </Switch>
     </BrowserRouter>
   );
