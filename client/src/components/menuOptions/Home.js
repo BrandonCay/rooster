@@ -1,6 +1,7 @@
 import React from 'react';
 import Cluck from '../Cluck';
 import {Container, ListGroup} from 'react-bootstrap';
+
 const loadCnt=10;
 /*
 const Home = () =>{
@@ -9,22 +10,30 @@ const Home = () =>{
     )
 }*/
 
+//observer activates when target is within root
 
 class Home extends React.Component{
     constructor(props){
         super();
         this.state={
             count:0,
-            list:new Array(loadCnt)
+            list:new Array(loadCnt),
+            listLimit:false,
+            loadingMsg:"Load More"
         }
         this.observer=undefined;
      //   this.loadingRef; // =React.createRef() ??? if callback deosnt work
     }
 
     handleObserver(entities, observer){
-        if(this.state.list.length===this.state.count){
-            this.setState({count:this.state.count+10});
-            console.log('observed');
+        if(!this.state.listLimit && this.state.list.length===this.state.count){
+            console.log("Adding Items to list");
+            this.addItemsToList();   
+        }
+        if(this.state.listLimit){
+            this.setState({loadingMsg: "Nothing to load"});
+        }else{
+            this.setState({loadingMsg: "Loading More"});
         }
         console.log("handlingObserver");
     }
@@ -33,22 +42,25 @@ class Home extends React.Component{
         console.log("Home Mounted", typeof(this.state.list));
         this.observer=new IntersectionObserver(this.handleObserver.bind(this), {root:null, rootMargin:"0px", threshold:1.0});
         this.observer.observe(this.loadingRef); //loadingRef is an element ex. <div ref={loadingRef => this.loadingRef=loadingRef}>
-        console.log(typeof(this.state.list));
-        
-       let arr = [1,2,3]
-       let list = new Array(loadCnt);
-       let cnt=0;
-       console.log(typeof(this.state.list), this.state.list, "1");   
+        this.addItemsToList();
 
-       for(let i=arr.length-1, j=0; i>=0 && j!==loadCnt; --i, ++j){
-        console.log(typeof(this.state.list), this.state.list, "2");   
-           list[j]=arr[i];
-           console.log("list updated:",list);
-           cnt++;
-       }
-       this.setState({list:this.state.list.concat(list), count:cnt});
-       console.log(typeof(this.state.list), this.state.list, this.state.count);
+    }
 
+    addItemsToList(){
+        let listCnt=this.state.count+loadCnt, realCnt=this.props.payload.clucks.length, listLimit=false;
+        if(listCnt>realCnt){ //adjust increment to exact size of clucks
+            listCnt=realCnt;
+            listLimit=true;
+        }
+        let list = new Array(listCnt); //initialize to prevent reinitialization everytime for push
+        const clucks = this.props.payload.clucks;
+
+        for(let i=this.props.payload.clucks.length-1, j=0; j<listCnt; --i, ++j){
+           list[j]=clucks[i].text;
+        }
+       
+       this.setState({list:list, count:listCnt, listLimit:listLimit});
+       console.log("New list:", this.state.list)
     }
 
     render(){ //sort and display cluck. 
@@ -62,15 +74,15 @@ class Home extends React.Component{
         this.setState({list:this.state.list+list});
         */
        //test
-       console.log(typeof(this.state.list), this.state.list, "0");   
+       console.log(this.state.count);   
 
         return(
             <Container>
                 <ListGroup>
                     {  
-                        this.state.list.map((item, index)=>(<ListGroup.Item>item</ListGroup.Item>))
+                        this.state.list.map((item, index)=>(<ListGroup.Item key={index}><Cluck /></ListGroup.Item>))
                     }
-                    <ListGroup.Item ref={loadingRef => this.loadingRef=loadingRef}>Loading...</ListGroup.Item>
+                    <ListGroup.Item ref={loadingRef => this.loadingRef=loadingRef}><a onClick={this.handleObserver.bind(this)}>{this.state.loadingMsg}</a></ListGroup.Item>
                 </ListGroup>
 
             </Container>

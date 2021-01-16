@@ -3,5 +3,5 @@ module.exports = {
     text:"",
     likes:0,
     to:[],
-    reclucks:"",
+    reclucks:0,
 }
