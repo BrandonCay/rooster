@@ -2,6 +2,7 @@ import React from 'react';
 import {Container, Col, Row} from 'react-bootstrap';
 import Home from './menuOptions/Home';
 import Profile from './menuOptions/Profile';
+import '../styles/menu.css';
 
 const xs="4";
 const routes = {
@@ -44,16 +45,18 @@ class Menu extends React.Component{
             console.log('past throw');
             const result = await fetch('/api/userdata/',{method:"GET", headers:{"auth-token":`${this.props.location.state.token}`}});
             this.user=await result.json();*/
-            const data=
-                {author:"Author",
-                text:"Text",
-                likes:0,
-                to:[],
-                reclucks:0,}
-            
-            const result={
-                clucks:[data]
-            }
+            //test INPUT
+                const data=
+                    {author:"Author",
+                    text:"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa AaaaaaA AAA AA AAAAA AA AAA",
+                    likes:0,
+                    to:[],
+                    reclucks:0,}
+                
+                const result={
+                    clucks:[data]
+                }
+            //
             let payload;
             switch(path){
                 case "home": payload={clucks:result.clucks};
@@ -88,7 +91,7 @@ class Menu extends React.Component{
             return(
                 <Container fluid>
                     <Row xs="12">
-                        <Col xs={xs}>A</Col> <Col xs={xs}><this.mid payload={this.payload}/></Col> <Col xs={xs}>{this.right}</Col>
+                        <Col xs={xs}>A</Col> <Col xs={xs} id="midCol"><this.mid payload={this.payload}/></Col> <Col xs={xs}>{this.right}</Col>
                     </Row>
                 </Container>
             )

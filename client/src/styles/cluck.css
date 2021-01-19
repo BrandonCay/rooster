@@ -1,0 +1,29 @@
+#container{
+    background-color: yellow;
+}
+
+#innerRow1{
+    background-color: green;
+}
+
+#innerRow2{
+    background-color: teal;
+    size:12px;
+    font-size:24px;
+}
+
+#innerRow3{
+    background-color: orange;
+}    
+
+#row1{
+    background-color: tomato;
+}
+
+
+#inner2Col1{
+    color:pink;
+}
+#inner2Col2{
+    color:rgb(9, 255, 255);
+}

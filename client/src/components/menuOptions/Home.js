@@ -56,7 +56,7 @@ class Home extends React.Component{
         const clucks = this.props.payload.clucks;
 
         for(let i=this.props.payload.clucks.length-1, j=0; j<listCnt; --i, ++j){
-           list[j]=clucks[i].text;
+           list[j]=clucks[i];
         }
        
        this.setState({list:list, count:listCnt, listLimit:listLimit});
@@ -77,14 +77,18 @@ class Home extends React.Component{
        console.log(this.state.count);   
 
         return(
-            <Container>
+            <Container style={{width:"100%"}}>
+                
                 <ListGroup>
                     {  
-                        this.state.list.map((item, index)=>(<ListGroup.Item key={index}><Cluck /></ListGroup.Item>))
+                        this.state.list.map((item, index)=>{
+                            console.log("ITEM", item);
+                            return <ListGroup.Item key={index} style={{"background-color":"", "padding":"0"}}><Cluck author={item.author} text={item.text}/></ListGroup.Item>})
+                        
                     }
                     <ListGroup.Item ref={loadingRef => this.loadingRef=loadingRef}><a onClick={this.handleObserver.bind(this)}>{this.state.loadingMsg}</a></ListGroup.Item>
                 </ListGroup>
-
+                
             </Container>
         );
     }
