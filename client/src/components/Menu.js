@@ -4,7 +4,8 @@ import Home from './menuOptions/Home';
 import Profile from './menuOptions/Profile';
 import '../styles/menu.css';
 
-const xs="4";
+const xsCol=[1,11,0];
+const mdCol=[4,4,4];
 const routes = {
     home: Home,
     profile: Profile
@@ -90,8 +91,8 @@ class Menu extends React.Component{
         }else if(this.state.loadState=== 2){
             return(
                 <Container fluid>
-                    <Row xs="12">
-                        <Col xs={xs}>A</Col> <Col xs={xs} id="midCol"><this.mid payload={this.payload}/></Col> <Col xs={xs}>{this.right}</Col>
+                    <Row xs="2">
+                        <Col xs={xsCol[0]} md={mdCol[0]}>A</Col> <Col xs={xsCol[1]} md={mdCol[1]} id="midCol" ><this.mid payload={this.payload}/></Col> <Col xs={xsCol[2]} md={mdCol[2]} className="d-none d-md-block">{this.right}</Col>
                     </Row>
                 </Container>
             )

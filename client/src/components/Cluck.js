@@ -1,7 +1,7 @@
 import React from 'react'
 import {Container, Row, Col} from 'react-bootstrap';
 import "../styles/cluck.css";
-const innerCol=[4,8], inner2Col=[8,4]
+const innerCol=[1,11], inner2Col=[8,4]
 //mediumm
 const mdInnerCol=[2,10], mdInner2Col=[8,4];
 //

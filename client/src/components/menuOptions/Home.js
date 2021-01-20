@@ -22,7 +22,7 @@ class Home extends React.Component{
             loadingMsg:"Load More"
         }
         this.observer=undefined;
-     //   this.loadingRef; // =React.createRef() ??? if callback deosnt work
+     //   this.loadingRef; // =React.createRef() ??? if callback doesnt work
     }
 
     handleObserver(entities, observer){
@@ -77,14 +77,12 @@ class Home extends React.Component{
        console.log(this.state.count);   
 
         return(
-            <Container style={{width:"100%"}}>
-                
+            <Container style={{"padding":"0"}}>                
                 <ListGroup>
                     {  
                         this.state.list.map((item, index)=>{
                             console.log("ITEM", item);
-                            return <ListGroup.Item key={index} style={{"background-color":"", "padding":"0"}}><Cluck author={item.author} text={item.text}/></ListGroup.Item>})
-                        
+                            return <ListGroup.Item key={index} style={{"padding":"0"}}><Cluck author={item.author} text={item.text}/></ListGroup.Item>})
                     }
                     <ListGroup.Item ref={loadingRef => this.loadingRef=loadingRef}><a onClick={this.handleObserver.bind(this)}>{this.state.loadingMsg}</a></ListGroup.Item>
                 </ListGroup>
