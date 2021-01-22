@@ -177,7 +177,8 @@ router.post('/login', async (req,res) => {
       if(!validPass) {
          throw new StatusObj(false, 400, 'Invalid password');
       }
-      const token = jwt.sign({_id:user._id},process.env.TOKEN_SECRET) //creates token using the secret and appends id as payload
+      const token = jwt.sign({_id:user._id},process.env.TOKEN_SECRET) 
+      //creates token using the secret and appends user to prevent refetching user to get properties
       res.set('auth-token', token).json(new StatusObj(true, 200, "Login Successful"));
    }
    catch(e){

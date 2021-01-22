@@ -22,8 +22,9 @@ function App() {
         <Route path="/verifyLink/:verificationCode" component={VerifyLink} />
         <Route path="/login" component={Login}/>
         <Route path="/register" component={Register}/> 
-        <Route path="/start" component={Start}/> 
-        <Route path="/:menuOptions" component={Menu}/>
+        <Route path="/start" component={Start} /> 
+        <Route path="/home" render={(routeProps)=><Menu leftActive={0} mid={Home} path="home"/>}/>
+        <Route path="/profile" render={(routeProps)=><Menu leftActive={1} mid={Profile} path="profile"/>}/>
       </Switch>
     </BrowserRouter>
   );

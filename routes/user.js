@@ -3,8 +3,38 @@ const mongoose = require('mongoose');
 const userModel = require('../models/userModel');
 const verifyTok=require("./verifyTokens");
 
-router.get('/home', verifyTok, async(req,res)=>{ 
-    res.send(req.userId);
+
+
+const checkUserData = async (req,res,next) => {
+    try{
+        //TEST INPUT
+        const data=
+        {
+            author:"Author",
+            text:"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa AaaaaaA AAA AA AAAAA AA AAA",
+            likes:0,
+            to:[],
+            reclucks:0,
+        }
+           
+        req.user={clucks:[data]}
+        console.log("middleware suc",req.user)
+        /*
+        req.user = await userModel.findById(req.userId);
+        console.log(req.user); */
+    }catch(e){
+        res.send("An Unexpected Error Occurred");
+    }
+    next();
+}
+
+router.get('/home', checkUserData, async(req,res)=>{ 
+    //test code without verifyToken to get data
+    try{
+        res.json({clucks:req.user.clucks})
+    }catch(e){
+        res.send("An Unexpected Error Occurred");
+    }
     /*
     try{
         let following = await userModel.findOne({_id:req.userId});
@@ -25,11 +55,26 @@ router.get('/home', verifyTok, async(req,res)=>{
     //use date as primary sort and popular as secondary
     res.json({list:clucks});*/
 })
+router.get('/userexists/:_id',async (req,res)=>{
+    try{
+    const result= (await User.findOne({_id:req.params._id}))? true:false;
+    res.json({exists:result});
+    }catch(e){
+        res.status(400).json(unxErr);
+    }
+})
+router.get('/userdata', verifyTok, async (req,res) => {
+    try{
+    const data = await User.findById(req.userId);
+    res.json(data);
+    }
+    catch(e){
+        res.status(400).json(unxErr);
+    }
+})
 
 
-
-
-
+module.exports = router;
 
 /*
 let interval = 86400000;

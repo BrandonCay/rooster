@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const path = require("path");
 const Api = require("twilio/lib/rest/Api");
 const User =require("./models/userModel");
+const userRoute = require('./routes/user');
 dotenv.config();
 
 mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser:true, useUnifiedTopology:true});
@@ -22,25 +23,9 @@ mongoose.set("useCreateIndex", true);
 //mongoose.set("useFinAndModify",false);
 //mongoose.set("createIndexes",true);
 //app.use(express.json());
-app.use('/api/auth',authRouter);
 const unxErr={success:false, status:400, msg:"Unexpected error"};
-app.get('/api/userexists/:_id',async (req,res)=>{
-    try{
-    const result= (await User.findOne({_id:req.params._id}))? true:false;
-    res.json({exists:result});
-    }catch(e){
-        res.status(400).json(unxErr);
-    }
-})
-app.get('/api/userdata', token, async (req,res) => {
-    try{
-    const data = await User.findById(req.userId);
-    res.json(data);
-    }
-    catch(e){
-        res.status(400).json(unxErr);
-    }
-})
+app.use('/api/auth',authRouter);
+app.use('/api/user',userRoute);
 //app.use('/api/user',) //get and post requests by users
        
 
