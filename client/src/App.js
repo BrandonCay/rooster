@@ -23,8 +23,8 @@ function App() {
         <Route path="/login" component={Login}/>
         <Route path="/register" component={Register}/> 
         <Route path="/start" component={Start} /> 
-        <Route path="/home" render={(routeProps)=><Menu leftActive={0} mid={Home} path="home"/>}/>
-        <Route path="/profile" render={(routeProps)=><Menu leftActive={1} mid={Profile} path="profile"/>}/>
+        <Route path="/home" render={(routeProps)=><Menu {...routeProps} leftActive={0} mid={Home} path="home"/>}/>
+        <Route path="/profile" render={(routeProps)=><Menu {...routeProps} leftActive={1} mid={Profile} path="profile"/>}/>
       </Switch>
     </BrowserRouter>
   );

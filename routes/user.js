@@ -55,6 +55,10 @@ router.get('/home', checkUserData, async(req,res)=>{
     //use date as primary sort and popular as secondary
     res.json({list:clucks});*/
 })
+
+router.get('/profile',(req,res)=>{
+    res.json({msg:"hi"});
+})
 router.get('/userexists/:_id',async (req,res)=>{
     try{
     const result= (await User.findOne({_id:req.params._id}))? true:false;
