@@ -8,6 +8,7 @@ const verifyTok=require("./verifyTokens");
 const checkUserData = async (req,res,next) => {
     try{
         //TEST INPUT
+        
         const data=
         {
             author:"Author",
@@ -23,7 +24,7 @@ const checkUserData = async (req,res,next) => {
         req.user = await userModel.findById(req.userId);
         console.log(req.user); */
     }catch(e){
-        res.send("An Unexpected Error Occurred");
+        res.json({msg:"An Unexpected Error Occurred"});
     }
     next();
 }
@@ -33,7 +34,7 @@ router.get('/home', checkUserData, async(req,res)=>{
     try{
         res.json({clucks:req.user.clucks})
     }catch(e){
-        res.send("An Unexpected Error Occurred");
+        res.status(400).json({msg:"An Unexpected Error Occurred"});
     }
     /*
     try{

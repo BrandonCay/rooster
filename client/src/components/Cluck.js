@@ -1,5 +1,5 @@
 import React from 'react'
-import {Container, Row, Col} from 'react-bootstrap';
+import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 import "../styles/cluck.css";
 const innerCol=[1,11], inner2Col=[8,4]
 //mediumm
@@ -33,12 +33,14 @@ class Cluck extends React.Component{
             likes:0,
             replies:[],
             to:[],
-            reclucks:0
+            reclucks:0,
+            state:false
         }
         this.author="";
         this.text="";
         this.img="";
     }
+
     componentDidMount(){
         try{
             const {likes,replies, to, reclucks, author, text} = this.props;
@@ -51,6 +53,16 @@ class Cluck extends React.Component{
             console.log("Unexpected error");
         }
     }
+
+    handleReplyClick(){
+        this.setState({show:!this.state.show});
+    }
+
+    handleReplySubmit(){
+        //api request to add message to clucks reply list
+        console.log('replied');
+    }
+
     render(){
         return(
             <Container id="container">
@@ -65,13 +77,41 @@ class Cluck extends React.Component{
                             <Col xs={12}>{this.text}</Col>
                         </Row>
                         <Row  id="innerRow3" className="innerRow">
-                            <Col xs={12}>Cluck Options/Thread</Col>
+                            <Col xs={4}>
+                                <Button onClick={this.handleReplyClick.bind(this)}>
+                                    Reply
+                                </Button>
+                            </Col>
+                            <Col>
+                                <Button>
+
+                                </Button>
+                            </Col>
+                            <Col>
+                                <Button>
+
+                                </Button>
+                            </Col>
                         </Row>
                     </Col>
-                </Row> 
+                    {
+
+                    }
+                </Row>
+                <Modal show={this.state.show}>{/*Gonna switch off with if statement */}
+                    <Modal.Title closeButton>
+                        <Button>Unsent Tweets</Button> {/* Not working */}
+                    </Modal.Title>
+                    <Modal.Body>
+                        <input id="modalInput"/>
+                        <Button onClick={this.handleReplySubmit.bind(this)}>Reply</Button>
+                    </Modal.Body>
+                </Modal>
             </Container>
         )
     }
 }
+
+
 
 export default Cluck;

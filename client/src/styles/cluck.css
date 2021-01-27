@@ -28,3 +28,9 @@
 #inner2Col2{
     color:rgb(9, 255, 255);
 }
+
+#modalInput{
+    size:100%;
+    background-color:red;
+    font-family:Arial;
+}

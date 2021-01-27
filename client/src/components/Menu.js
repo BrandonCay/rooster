@@ -24,6 +24,7 @@ class Menu extends React.Component{
             loadState:1,
         }
         this.error="Error";
+        this.payload=undefined;
     }
     
     async componentDidMount(){
@@ -31,12 +32,14 @@ class Menu extends React.Component{
         console.log('Menu DID MOUNT');
         try{
             let result = await fetch(`/api/user/${this.props.path}`, {method:"GET"});
+            console.log(result);
             this.payload=await result.json();
+            console.log(this.payload);
             console.log('mount success', this.payload,  this.payload.clucks);
             this.setState({loadState:2});
         }catch(e){
             console.log(e);
-            this.error=e;
+            this.error=JSON.stringify(e);
             this.setState({loadState:0});
         }
     }
