@@ -34,7 +34,7 @@ class Cluck extends React.Component{
             replies:[],
             to:[],
             reclucks:0,
-            state:false
+            show:false
         }
         this.author="";
         this.text="";
@@ -62,6 +62,17 @@ class Cluck extends React.Component{
         //api request to add message to clucks reply list
         console.log('replied');
     }
+
+    setShow(show){
+        console.log("show",show);
+        this.setState({show:show});
+    }
+
+    handleClose(){
+        this.setShow(false);
+    }
+
+    
 
     render(){
         return(
@@ -98,12 +109,14 @@ class Cluck extends React.Component{
 
                     }
                 </Row>
-                <Modal show={this.state.show}>{/*Gonna switch off with if statement */}
-                    <Modal.Title closeButton>
-                        <Button>Unsent Tweets</Button> {/* Not working */}
-                    </Modal.Title>
+                <Modal show={this.state.show} onHide={this.handleClose.bind(this)}>{/*Gonna switch off with if statement */}
+                    <Modal.Header closeButton>
+                        <Modal.Title >
+                            <Button>Unsent Tweets</Button> {/* Not working */}
+                        </Modal.Title>
+                    </Modal.Header>
                     <Modal.Body>
-                        <input id="modalInput"/>
+                        <textarea id="modalInput" style={{width:"100%"}}/>
                         <Button onClick={this.handleReplySubmit.bind(this)}>Reply</Button>
                     </Modal.Body>
                 </Modal>
