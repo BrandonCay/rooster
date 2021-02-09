@@ -1,2 +1,2 @@
 # rooster
-a twitterclone for full-stack practice
+a twitterclone for full-stack practice. Not finished yet
