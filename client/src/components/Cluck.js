@@ -1,6 +1,7 @@
 import React from 'react'
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 import "../styles/cluck.css";
+import ContentEditable from 'react-contenteditable';
 const innerCol=[1,11], inner2Col=[8,4]
 //mediumm
 const mdInnerCol=[2,10], mdInner2Col=[8,4];
@@ -34,8 +35,11 @@ class Cluck extends React.Component{
             replies:[],
             to:[],
             reclucks:0,
-            show:false
+            //Modal States.
+            show:false,
+            html:""
         }
+        this.contentEditable=React.createRef();
         this.author="";
         this.text="";
         this.img="";
@@ -70,6 +74,11 @@ class Cluck extends React.Component{
 
     handleClose(){
         this.setShow(false);
+    }
+
+    handleOnContentChange(e){
+        console.log("text div", e.target.value)
+        this.setState({html:e.target.value});
     }
 
     
@@ -116,7 +125,9 @@ class Cluck extends React.Component{
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <textarea id="modalInput" style={{width:"100%"}}/>
+                        <ContentEditable onChange={this.handleOnContentChange.bind(this)} html={this.state.html} innerRef={this.contentEditable}
+                        style={{borderColor:"black", border:"5px", backgroundColor:"red"}}
+                        />{/*borderColor Not working*/ }
                         <Button onClick={this.handleReplySubmit.bind(this)}>Reply</Button>
                     </Modal.Body>
                 </Modal>
@@ -124,6 +135,7 @@ class Cluck extends React.Component{
         )
     }
 }
+
 
 
 
