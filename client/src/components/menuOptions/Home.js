@@ -13,7 +13,7 @@ const Home = () =>{
 //observer activates when target is within root
 
 class Home extends React.Component{
-    constructor(props){
+    constructor(props){//has payload to hold list of data
         super();
         this.state={
             count:0,

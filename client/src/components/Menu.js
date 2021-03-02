@@ -28,7 +28,7 @@ class Menu extends React.Component{
     }
     
     async componentDidMount(){
-        //need to add switch statement for payload/data package for each route such that data:{routeData:aa}
+        //need to add switch statement for payload/data package for each route such that data:{routeData:props}
         console.log('Menu DID MOUNT');
         try{
             let result = await fetch(`/api/user/${this.props.path}`, {method:"GET"});

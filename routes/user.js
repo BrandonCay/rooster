@@ -4,20 +4,21 @@ const userModel = require('../models/userModel');
 const verifyTok=require("./verifyTokens");
 
 
+const defaultData=
+{
+    author:"Author",
+    text:"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa AaaaaaA AAA AA AAAAA AA AAA",
+    likes:0,
+    to:[],
+    reclucks:0,
+}
 
 const checkUserData = async (req,res,next) => {
     try{
         //TEST INPUT
         
-        const data=
-        {
-            author:"Author",
-            text:"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa AaaaaaA AAA AA AAAAA AA AAA",
-            likes:0,
-            to:[],
-            reclucks:0,
-        }
-           
+  
+        let data=defaultData;
         req.user={clucks:[data]}
         console.log("middleware suc",req.user)
         /*
@@ -77,6 +78,8 @@ router.get('/userdata', verifyTok, async (req,res) => {
         res.status(400).json(unxErr);
     }
 })
+
+router.post('/reply',)
 
 
 module.exports = router;

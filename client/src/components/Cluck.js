@@ -26,13 +26,22 @@ function defaultCheck(data){ //returns different default value depending on
         return data;
     }
 } */
+const cluckDefault={
+    id:undefined,
+    author:"",
+    likes:0,
+    replies:new Array(1),
+    to:[],
+    reclucks:0,
+}
 
+//cluck needs to append to replies and display a message
 class Cluck extends React.Component{
     constructor(props){
         super();
         this.state={
             likes:0,
-            replies:[],
+            replies:new Array(1),
             to:[],
             reclucks:0,
             //Modal States.
@@ -62,24 +71,27 @@ class Cluck extends React.Component{
         this.setState({show:!this.state.show});
     }
 
-    handleReplySubmit(){
+    async handleReplySubmit(){
         //api request to add message to clucks reply list
-        console.log('replied');
+        let replies=this.state.replies,  newCluck=cluckDefault;
+        newCluck.text=this.state.html;  
+        newCluck.author=
+        await fetch()
+        this.setState({show:false, replies:replies})
+        console.log('replied: ', this.state.replies);
     }
 
-    setShow(show){
-        console.log("show",show);
-        this.setState({show:show});
-    }
 
     handleClose(){
-        this.setShow(false);
+        this.setState({show:false});
     }
 
     handleOnContentChange(e){
         console.log("text div", e.target.value)
         this.setState({html:e.target.value});
     }
+
+
 
     
 
@@ -118,20 +130,26 @@ class Cluck extends React.Component{
 
                     }
                 </Row>
-                <Modal show={this.state.show} onHide={this.handleClose.bind(this)}>{/*Gonna switch off with if statement */}
-                    <Modal.Header closeButton>
-                        <Modal.Title >
-                            <Button>Unsent Tweets</Button> {/* Not working */}
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <ContentEditable onChange={this.handleOnContentChange.bind(this)} html={this.state.html} innerRef={this.contentEditable}
-                        style={{borderColor:"black", border:"5px", backgroundColor:"red"}}
-                        />{/*borderColor Not working*/ }
-                        <Button onClick={this.handleReplySubmit.bind(this)}>Reply</Button>
-                    </Modal.Body>
-                </Modal>
+
+            <Modal show={this.state.show} onHide={this.handleClose.bind(this)}>{/*Gonna switch off with if statement */}
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        <Button>Unsent Tweets</Button> 
+                    </Modal.Title> 
+                </Modal.Header>
+                <Modal.Body>
+                    <ContentEditable onChange={this.handleOnContentChange.bind(this)} html={this.state.html} innerRef={this.contentEditable}
+                    style={{borderColor:"black", border:"5px", backgroundColor:"red", minHeight:"150px"}}
+                    />
+                </Modal.Body>
+                <Modal.Footer style={{justifyContent:"start"}}>
+                    <Button onClick={this.handleReplySubmit.bind(this)} >Reply</Button>
+                </Modal.Footer>
+            </Modal>
+
+
             </Container>
+                       
         )
     }
 }
