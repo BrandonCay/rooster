@@ -2,6 +2,7 @@ import React from 'react'
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 import "../styles/cluck.css";
 import ContentEditable from 'react-contenteditable';
+import defaultCluck from '../../../clucks';
 const innerCol=[1,11], inner2Col=[8,4]
 //mediumm
 const mdInnerCol=[2,10], mdInner2Col=[8,4];
@@ -26,25 +27,14 @@ function defaultCheck(data){ //returns different default value depending on
         return data;
     }
 } */
-const cluckDefault={
-    id:undefined,
-    author:"",
-    likes:0,
-    replies:new Array(1),
-    to:[],
-    reclucks:0,
-}
+
 
 //cluck needs to append to replies and display a message
 class Cluck extends React.Component{
     constructor(props){
         super();
         this.state={
-            likes:0,
-            replies:new Array(1),
-            to:[],
-            reclucks:0,
-            //Modal States.
+            ...defaultCluck,
             show:false,
             html:""
         }

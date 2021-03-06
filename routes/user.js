@@ -2,6 +2,7 @@ const router = require('express').Router();
 const mongoose = require('mongoose');
 const userModel = require('../models/userModel');
 const verifyTok=require("./verifyTokens");
+const StatusObj = require("./statusObj");
 
 
 const defaultData=
@@ -79,7 +80,22 @@ router.get('/userdata', verifyTok, async (req,res) => {
     }
 })
 
-router.post('/reply',)
+//logged in user provided by token
+router.post('/reply', async (req,res)=>{
+const {receiverId, cluckId, replyCluck} = req.body;
+const receiver = await userModel.findById(receiverId);
+const cluckList= receiver.clucks, sz=cluckList.length;
+let i, newReplies;
+for(i=0; i<sz; ++i){
+    if(cluckList[i].cluckId===cluckId){{//search for replyingTo cluck and add the reply to its replies list
+        newReplies = [...cluckList.replies,replyCluck];
+        break;
+    }}
+}
+receiver.clucks[i].replies=newReplies;//replaces reply list
+await receiver.save();//saves new doc in server
+res.json(new StatusObj());
+})
 
 
 module.exports = router;

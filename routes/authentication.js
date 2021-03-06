@@ -9,6 +9,7 @@ const nodemailer = require("nodemailer");
 const aCodes=require("../models/activationCodes");
 const client=require("twilio")(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 const crypto = require("crypto");
+const StatusObj = require("./statusObj");
 
 const transporter=nodemailer.createTransport({
    service:"Gmail",
@@ -59,11 +60,7 @@ async function makeCode(){ //used for making hashes for phone verification codes
 
 }
 
-function StatusObj(success=true,status=200, msg=""){
-   this.success=success;
-   this.status=status;
-   this.msg=msg;
-}
+
 
 function NoEmail(){
    
