@@ -2,7 +2,7 @@ import React from 'react'
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 import "../styles/cluck.css";
 import ContentEditable from 'react-contenteditable';
-import defaultCluck from '../../../clucks';
+import defaultCluck from '../cluck';
 const innerCol=[1,11], inner2Col=[8,4]
 //mediumm
 const mdInnerCol=[2,10], mdInner2Col=[8,4];
@@ -39,6 +39,7 @@ class Cluck extends React.Component{
             html:""
         }
         this.contentEditable=React.createRef();
+        this.token = this.context;
         this.author="";
         this.text="";
         this.img="";
@@ -46,6 +47,7 @@ class Cluck extends React.Component{
 
     componentDidMount(){
         try{
+            console.log("context: ", this.token);
             const {likes,replies, to, reclucks, author, text} = this.props;
             console.log("CLUCK PROPS:", this.props);
             this.setState({likes:likes, replies:replies, to:to, reclucks:reclucks});
@@ -63,9 +65,9 @@ class Cluck extends React.Component{
 
     async handleReplySubmit(){
         //api request to add message to clucks reply list
-        let replies=this.state.replies,  newCluck=cluckDefault;
+        let replies=this.state.replies,  newCluck=defaultCluck;
         newCluck.text=this.state.html;  
-        newCluck.author=
+        newCluck.author= undefined;//provided by context
         await fetch()
         this.setState({show:false, replies:replies})
         console.log('replied: ', this.state.replies);

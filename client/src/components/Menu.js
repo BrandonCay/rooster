@@ -3,6 +3,7 @@ import {Container, Col, Row, Button} from 'react-bootstrap';
 import Home from './menuOptions/Home';
 import Profile from './menuOptions/Profile';
 import '../styles/menu.css';
+import { ThisMonthInstance } from 'twilio/lib/rest/api/v2010/account/usage/record/thisMonth';
 
 const xsCol=[1,11,0];
 const mdCol=[3,6,3];
@@ -25,6 +26,7 @@ class Menu extends React.Component{
         }
         this.error="Error";
         this.payload=undefined;
+        this.tokenContext=React.createContext(this.props.token);
     }
     
     async componentDidMount(){
@@ -45,7 +47,7 @@ class Menu extends React.Component{
     }
 
     handleOnClick(e){
-                    //test INPUT
+    //test INPUT
         this.props.history.push(e.target.value);//this.paths[e.target.value]
     //does not route because same route path being used (guessing). same applies for wrong routes
     }
@@ -62,29 +64,31 @@ class Menu extends React.Component{
         }else if(this.state.loadState=== 2){
             return(
                 <Container fluid>
-                    <Row xs="2">
-                        <Col xs={xsCol[0]} md={mdCol[0]} lg={lgCol[0]}>
-                            <Row>
-                                <Button value={"/home"} onClick={this.handleOnClick.bind(this)}>
-                                    H
-                                </Button>
-                            </Row>
-                            <Row>
-                                <Button value={"/profile"} onClick={this.handleOnClick.bind(this)}>
-                                    P
-                                </Button>
-                            </Row>    
-                        </Col> 
+                    <this.tokenContext.Provider>
+                        <Row xs="2">
+                            <Col xs={xsCol[0]} md={mdCol[0]} lg={lgCol[0]}>
+                                <Row>
+                                    <Button value={"/home"} onClick={this.handleOnClick.bind(this)}>
+                                        H
+                                    </Button>
+                                </Row>
+                                <Row>
+                                    <Button value={"/profile"} onClick={this.handleOnClick.bind(this)}>
+                                        P
+                                    </Button>
+                                </Row>    
+                            </Col> 
 
-                        {/*Middle Col*/ }
-                        <Col xs={xsCol[1]} md={mdCol[1]} lg={lgCol[1]}id="midCol" >
-                            <this.props.mid payload={this.payload}/>
-                        </Col> 
+                            {/*Middle Col*/ }
+                            <Col xs={xsCol[1]} md={mdCol[1]} lg={lgCol[1]}id="midCol" >
+                                <this.props.mid payload={this.payload}/>
+                            </Col> 
 
-                        <Col xs={xsCol[2]} md={mdCol[2]} lg={lgCol[2]}className="d-none d-md-block">
-                            {this.right}
-                        </Col>
-                    </Row>
+                            <Col xs={xsCol[2]} md={mdCol[2]} lg={lgCol[2]}className="d-none d-md-block">
+                                {this.right}
+                            </Col>
+                        </Row>
+                    </this.tokenContext.Provider>
                 </Container>
             )
         }else{

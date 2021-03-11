@@ -14,6 +14,8 @@ function left(){
     <div>B</div>
   )
 }
+
+
 function App() {
   return (
     <BrowserRouter>
