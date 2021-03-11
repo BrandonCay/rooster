@@ -1,10 +1,9 @@
 
-
+/*
+cluckId and userId are included as this.props in Cluck component
+*/
 const defaultCluck = {
-    userId:"",
-    cluckId:"",
     author:"",
-    text:"",
     likes:0,
     to:[],
     reclucks:0,

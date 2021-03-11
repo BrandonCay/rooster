@@ -4,7 +4,7 @@ import "../styles/cluck.css";
 import ContentEditable from 'react-contenteditable';
 import defaultCluck from '../cluck';
 const innerCol=[1,11], inner2Col=[8,4]
-//mediumm
+//medium
 const mdInnerCol=[2,10], mdInner2Col=[8,4];
 //
 
@@ -31,38 +31,29 @@ function defaultCheck(data){ //returns different default value depending on
 
 //cluck needs to append to replies and display a message
 class Cluck extends React.Component{
-    constructor(props){
+    constructor(props){//props contains 
         super();
         this.state={
-            ...defaultCluck,
-            show:false,
+            reclucks:0,
+            likes:0,
+            show:false, //modal
             html:""
+
         }
+        ({author:this.author,  text:this.text, img:this.img, userId:this.userId, to:this.to}= this.props);//destructering
         this.contentEditable=React.createRef();
-        this.token = this.context;
-        this.author="";
+
+        /*this.author="";
         this.text="";
         this.img="";
-    }
-
-    componentDidMount(){
-        try{
-            console.log("context: ", this.token);
-            const {likes,replies, to, reclucks, author, text} = this.props;
-            console.log("CLUCK PROPS:", this.props);
-            this.setState({likes:likes, replies:replies, to:to, reclucks:reclucks});
-            this.author=author;
-            this.text=text;
-            console.log("SUCCESS", this.state, this.author, this.text, this.img);
-        }catch(e){
-            console.log("Unexpected error");
-        }
+        this.userId="";
+        this.to=[];*/
     }
 
     handleReplyClick(){
         this.setState({show:!this.state.show});
     }
-
+    
     async handleReplySubmit(){
         //api request to add message to clucks reply list
         let replies=this.state.replies,  newCluck=defaultCluck;
@@ -82,11 +73,6 @@ class Cluck extends React.Component{
         console.log("text div", e.target.value)
         this.setState({html:e.target.value});
     }
-
-
-
-    
-
     render(){
         return(
             <Container id="container">
@@ -102,7 +88,7 @@ class Cluck extends React.Component{
                         </Row>
                         <Row  id="innerRow3" className="innerRow">
                             <Col xs={4}>
-                                <Button onClick={this.handleReplyClick.bind(this)}>
+                                <Button onClick={this.handleReplyClick.bind(this)}> {/*Cant seperate Modal because of this*/}
                                     Reply
                                 </Button>
                             </Col>
@@ -118,28 +104,25 @@ class Cluck extends React.Component{
                             </Col>
                         </Row>
                     </Col>
-                    {
+                    <Modal show={this.state.show} onHide={this.handleClose.bind(this)}>{/*Gonna switch off with if statement */}
+                        <Modal.Header closeButton>
+                            <Modal.Title>
+                                <Button>Unsent Tweets</Button> 
+                            </Modal.Title> 
+                        </Modal.Header>
+                    <Modal.Body>
+                        <ContentEditable onChange={this.handleOnContentChange.bind(this)} html={this.state.html} innerRef={this.contentEditable}
+                        style={{borderColor:"black", border:"5px", backgroundColor:"red", minHeight:"150px"}}
+                        />
+                    </Modal.Body>
+                    <Modal.Footer style={{justifyContent:"start"}}>
+                        <Button onClick={this.handleReplySubmit.bind(this)} >Reply</Button>
+                    </Modal.Footer>
 
-                    }
+                    </Modal>
+
+
                 </Row>
-
-            <Modal show={this.state.show} onHide={this.handleClose.bind(this)}>{/*Gonna switch off with if statement */}
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        <Button>Unsent Tweets</Button> 
-                    </Modal.Title> 
-                </Modal.Header>
-                <Modal.Body>
-                    <ContentEditable onChange={this.handleOnContentChange.bind(this)} html={this.state.html} innerRef={this.contentEditable}
-                    style={{borderColor:"black", border:"5px", backgroundColor:"red", minHeight:"150px"}}
-                    />
-                </Modal.Body>
-                <Modal.Footer style={{justifyContent:"start"}}>
-                    <Button onClick={this.handleReplySubmit.bind(this)} >Reply</Button>
-                </Modal.Footer>
-            </Modal>
-
-
             </Container>
                        
         )
